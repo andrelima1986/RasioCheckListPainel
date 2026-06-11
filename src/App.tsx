@@ -1,10 +1,10 @@
+import AppRoutes from "./AppRoutes";
 
-
-function App() {
+const App = () => {
   return (
-    <div className="App">
-     <h1>Bem vindo ao painel do check list</h1>
-    </div>
+    <>
+    <AppRoutes />
+    </>
   );
 }
 
