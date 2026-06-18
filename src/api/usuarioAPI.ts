@@ -4,7 +4,7 @@ import { UserToken } from "../models/useToken";
 
 const URL_BASE = "http://172.16.3.174:5003/api";
 
-const criarUsuario = async (usuario: UsuarioDTO): 
+export const criarUsuario = async (usuario: UsuarioDTO): 
 Promise<ResponseDTO<UsuarioDTO>> => {
     try {
        const token = localStorage.getItem("token"); 
@@ -39,8 +39,6 @@ Promise<ResponseDTO<UsuarioDTO>> => {
     }
 }
 
-
-
 export const fazerLogin = async (
   login: LoginModel,
 ): Promise<ResponseDTO<UserToken>> => {
@@ -57,7 +55,7 @@ export const fazerLogin = async (
 
     const data = text ? JSON.parse(text) : null;
 
-    console.log("RESPOSTA API:", data);
+  
 
     if (!response.ok) {
       // validação automática ASP.NET
@@ -86,3 +84,40 @@ export const fazerLogin = async (
     throw new Error(error.message || "Erro inesperado");
   }
 };
+
+export const listarTodosUsuarios = async(): Promise<ResponseDTO<UsuarioDTO[]>> => {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`${URL_BASE}/listarTodosUsuarios`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+   console.log("STATUS:", response.status);
+console.log("OK:", response.ok); 
+
+  const data: ResponseDTO<UsuarioDTO[]> = await response.json();
+
+  console.log("RESPOSTA API:", data);
+
+   if (!response.ok || !data.sucesso) {
+      throw new Error(data.mensagem);
+    }
+
+
+  return {
+     sucesso: data.sucesso,
+     mensagem: data.mensagem,
+     dados: data.dados
+  }
+  } catch (error: any) {
+    return {
+      sucesso: false,
+      mensagem: error.message,
+      dados: []
+    }
+  }
+}

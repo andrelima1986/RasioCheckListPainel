@@ -4,43 +4,28 @@ import NotFound from "./Pages/404NotFound";
 import Home from "./Pages/Home";
 import PrivateRoute from "./PrivateRoute";
 import EmConstrucao from "./Pages/EmConstrucao";
+import Usuario from "./Pages/Usuario";
 
 const AppRoutes = () => {
     return (
         <BrowserRouter>
             <Routes>
-                <Route path="/" element={<Navigate replace to="/login" />} />
+                <Route path="/" element={
+                      
+            localStorage.getItem("token")
+            ? <Navigate to="/home" replace />
+            : <Navigate to="/login" replace />
+                } />
                 <Route path="/login" element={<Login />} />
-                <Route path="/home" element={ 
-                    <PrivateRoute>
-                        <Home />
-                    </PrivateRoute> 
-                    } />
-                <Route path="/usuarios" element={
-                    <PrivateRoute>
-                        <EmConstrucao />
-                    </PrivateRoute>
-                } />
-                <Route path="/perfis" element={
-                    <PrivateRoute>
-                        <EmConstrucao />
-                    </PrivateRoute>
-                } />
-                 <Route path="/checklists" element={
-                    <PrivateRoute>
-                        <EmConstrucao />
-                    </PrivateRoute>
-                } />
-                 <Route path="/dashboards" element={
-                    <PrivateRoute>
-                        <EmConstrucao />
-                    </PrivateRoute>
-                } />
-                 <Route path="/configuracoes" element={
-                    <PrivateRoute>
-                        <EmConstrucao />
-                    </PrivateRoute>
-                } />
+                
+                <Route element={<PrivateRoute  />}>
+                <Route path="/home"element={<Home />}/>
+                <Route path="/usuarios" element={<Usuario />} />
+                <Route path="/perfis" element={<EmConstrucao />} />
+                 <Route path="/checklists" element={<EmConstrucao />} />
+                 <Route path="/dashboards" element={<EmConstrucao />} />
+                 <Route path="/configuracoes" element={<EmConstrucao />} />
+                </Route>
                 <Route path="*" element={<NotFound />} />
             </Routes>
         </BrowserRouter>

@@ -7,26 +7,25 @@ import RasioInput from "../Components/Inputs/RasioInput";
 import RasioInputSenha from "../Components/Inputs/RasioInputSenha";
 import RasioBotao from "../Components/RasioBotao";
 import { useNavigate } from "react-router-dom";
-import { fazerLogin } from "../api/usuarioAPI";
-import { LoginModel } from "../models/loginModel";
-import { UsuarioDTO } from "../models/dto";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../store";
+import { loginThunk } from "../redux/thunks/loginthunk";
 
 
 const Login = () => {
 
      const isMobile = useMediaQuery("(max-width: 768px)");
+
+     const dispatch = useDispatch<AppDispatch>();
+
+     const { loading, token } = useSelector((state: RootState) => state.login);
      const [login, setLogin] = useState<string>("");
      const [senha, setSenha] = useState<string>("");
      const [messageType, setMessageType] = useState<"success" | "error" | null>(null);
      const [message, setMessage] = useState<string | null>(null);
 
-     const token = localStorage.getItem("token");
-     const [loading, setLoading] = useState(false);
+   
       const navigate = useNavigate();
-      const usuarioNomeCompleto: UsuarioDTO | null = localStorage.getItem("usuarioLogin")
-        ? JSON.parse(localStorage.getItem("usuarioLogin")!).usuarioNomeCompleto
-        : null;
-
        const heading = isMobile
     ? rasioTipografiasThemes.h4?.fontSize
     : rasioTipografiasThemes.h3?.fontSize;
@@ -37,14 +36,7 @@ const Login = () => {
 
       useEffect(() => {
     if (token) {
-      navigate("/home", {
-        state: {
-          token,
-          usuario: {
-            usuarioNomeCompleto: usuarioNomeCompleto || "Usuário"
-          }
-        },
-      });
+      navigate("/home");
       // Aqui você pode redirecionar para outra página
     }
   }, [token, navigate]);
@@ -70,36 +62,23 @@ const Login = () => {
     setMessage(null);
     setMessageType(null);
 
-    const loginData: LoginModel = {
-      login,
-      senha,
-    };
+      const response = await dispatch(loginThunk({login, senha})).unwrap();
 
-    const response = await fazerLogin(loginData);
 
-    if (response.sucesso) {
       setMessage(response.mensagem);
       setMessageType("success");
 
-    localStorage.setItem(
-    "usuarioLogin",
-    JSON.stringify(response.dados)
-  );
-
+ 
       setTimeout(() => {
         navigate("/home", {
-          state: response.dados, // Passa os dados do usuário para a página Home  
+           // Passa os dados do usuário para a página Home  
           }
         );
       }, 5000);
 
       return;
     }
-
-    setMessage(response.mensagem);
-    setMessageType("error");
-
-  } catch (error: any) {
+   catch (error: any) {
     setMessage(error.message);
     setMessageType("error");
   }
@@ -154,7 +133,7 @@ const Login = () => {
 
           <RasioInput
              size="lg"
-            placeholder="Digite o seu login"
+            placeholder="Digite o seu CPF ou E-mail"
             radius={10}
             required
             value={login}

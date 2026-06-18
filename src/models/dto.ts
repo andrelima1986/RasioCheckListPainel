@@ -11,4 +11,27 @@ export interface UsuarioDTO {
     usuarioEmail: string;
     usuarioSenha: string;
     usuarioStatus: string;
+    tipoCheckListId: number;
+}
+
+export interface UsuarioLogadoDTO {
+  usuarioId: number;
+  usuarioNomeCompleto: string;
+}
+
+export interface PerfilDTO {
+   perfilId: number;
+   perfilNome: string;
+   perfilStatus: boolean;
+}
+
+export interface PermissaoDTO {
+     permissaoId: number; 
+     permissaoNome: string;
+     permissaoStatus: boolean;
+}
+
+export interface PerfilPermissaoDTO {
+    perfilId: number;
+    permissaoId: number;
 }
